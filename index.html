@@ -29,23 +29,274 @@
     <style>
         body { font-family: 'Inter', sans-serif; }
         h1, h2, h3, h4, .font-serif { font-family: 'Crimson Pro', serif; }
+        .view-section { display: none; }
+        .view-section.active { display: block; animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .bg-gold-gradient {
             background: linear-gradient(135deg, #B8860B 0%, #DAA520 100%);
         }
+        .chat-open { height: 500px; width: 380px; }
+        .chat-closed { height: 0; width: 0; padding: 0; overflow: hidden; opacity: 0; }
     </style>
 <script type="importmap">
 {
   "imports": {
-    "react-router-dom": "https://esm.sh/react-router-dom@^7.11.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
     "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3"
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.11.0",
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0"
   }
 }
 </script>
 </head>
-<body class="bg-white text-gray-900">
-    <div id="root"></div>
+<body class="bg-white text-gray-900 min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <header class="bg-eduBlue text-white sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="#" data-link="home" class="flex items-center space-x-3 group nav-trigger">
+                    <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center border-2 border-eduGold p-1 overflow-hidden">
+                       <svg viewBox="0 0 100 100" class="w-full h-full text-eduBlue">
+                         <path d="M50 5 L15 25 L15 65 C15 85 50 95 50 95 C50 95 85 85 85 65 L85 25 L50 5 Z" fill="white" stroke="currentColor" strokeWidth="2" />
+                         <circle cx="50" cy="35" r="8" fill="#B8860B" />
+                         <path d="M30 60 Q50 45 70 60 L65 75 Q50 65 35 75 Z" fill="#B8860B" />
+                       </svg>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xl font-bold tracking-tight font-serif uppercase leading-none">Louis</span>
+                        <span class="text-xs text-eduGold font-bold uppercase tracking-widest leading-none mt-1">Eduplus Ltd</span>
+                    </div>
+                </a>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#" data-link="home" class="nav-trigger text-sm font-medium hover:text-eduGold transition-colors text-eduGold border-b-2 border-eduGold">Home</a>
+                    <a href="#" data-link="about" class="nav-trigger text-sm font-medium hover:text-eduGold transition-colors">About</a>
+                    <a href="#" data-link="services" class="nav-trigger text-sm font-medium hover:text-eduGold transition-colors">Services</a>
+                    <a href="#" data-link="books" class="nav-trigger text-sm font-medium hover:text-eduGold transition-colors">Books</a>
+                    <a href="#" data-link="contact" class="nav-trigger text-sm font-medium hover:text-eduGold transition-colors">Contact</a>
+                </nav>
+                <button id="mobile-menu-btn" class="md:hidden p-2 text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Nav -->
+        <div id="mobile-menu" class="hidden md:hidden bg-eduBlue border-t border-blue-900 px-4 py-4 space-y-4">
+            <a href="#" data-link="home" class="nav-trigger block text-base font-medium">Home</a>
+            <a href="#" data-link="about" class="nav-trigger block text-base font-medium">About</a>
+            <a href="#" data-link="services" class="nav-trigger block text-base font-medium">Services</a>
+            <a href="#" data-link="books" class="nav-trigger block text-base font-medium">Books</a>
+            <a href="#" data-link="contact" class="nav-trigger block text-base font-medium">Contact</a>
+        </div>
+    </header>
+
+    <main class="flex-grow">
+        <!-- Home View -->
+        <section id="view-home" class="view-section active">
+            <div class="relative h-[80vh] flex items-center bg-eduBlue overflow-hidden">
+                <div class="absolute inset-0 opacity-30">
+                    <img src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80" class="w-full h-full object-cover" alt="Background">
+                </div>
+                <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-white">
+                    <div class="max-w-3xl">
+                        <h1 class="text-5xl md:text-7xl font-bold leading-tight mb-6">
+                            Empowering Minds. <span class="text-eduGold">Transforming Learning.</span>
+                        </h1>
+                        <p class="text-xl md:text-2xl text-gray-200 mb-10 leading-relaxed font-light">
+                            Practical, Christ-centred education solutions that unite excellence, character, and parenting.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <button data-link="contact" class="nav-trigger px-8 py-4 bg-eduGold hover:bg-eduGoldLight text-eduBlue font-bold rounded-lg shadow-xl transition-all">Work with Us →</button>
+                            <button data-link="services" class="nav-trigger px-8 py-4 border-2 border-white hover:bg-white hover:text-eduBlue font-bold rounded-lg transition-all">Our Services</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="py-20 bg-gray-50 text-center px-4">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-3xl md:text-4xl font-bold text-eduBlue mb-8">Nurturing Mind, Heart and Spirit</h2>
+                    <p class="text-lg text-gray-700 leading-relaxed">Louis Eduplus Ltd partners with schools, churches, and parents to deliver innovative curricula and teacher training anchored in Christian truth.</p>
+                </div>
+            </div>
+
+            <div class="py-20 bg-white px-4">
+                <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-8">
+                    <div class="p-8 border border-gray-100 rounded-2xl hover:shadow-xl transition-all">
+                        <div class="text-4xl mb-4">🎓</div>
+                        <h3 class="text-xl font-bold text-eduBlue mb-3">Teacher Training</h3>
+                        <p class="text-gray-600">Equipping educators to teach with professional excellence and deep faith.</p>
+                    </div>
+                    <div class="p-8 border border-gray-100 rounded-2xl hover:shadow-xl transition-all">
+                        <div class="text-4xl mb-4">📚</div>
+                        <h3 class="text-xl font-bold text-eduBlue mb-3">Curriculum Design</h3>
+                        <p class="text-gray-600">Seamless integration of 21st-century skills and Christian values.</p>
+                    </div>
+                    <div class="p-8 border border-gray-100 rounded-2xl hover:shadow-xl transition-all">
+                        <div class="text-4xl mb-4">🏛️</div>
+                        <h3 class="text-xl font-bold text-eduBlue mb-3">School Consultancy</h3>
+                        <p class="text-gray-600">Strategic development for sustainable growth in faith-based institutions.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About View -->
+        <section id="view-about" class="view-section">
+            <div class="bg-eduBlue py-16 px-4">
+                <div class="max-w-7xl mx-auto">
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">Our Vision & Mission</h1>
+                    <p class="text-xl text-eduGold">Education with a Kingdom Heart</p>
+                </div>
+            </div>
+            <div class="py-20 px-4 max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-eduBlue mb-6">Our Purpose</h2>
+                    <p class="text-lg text-gray-700 leading-relaxed mb-6">Louis Eduplus Ltd exists to revolutionize education by marrying innovative practice with Christian and human values.</p>
+                    <div class="space-y-4">
+                        <div class="flex items-start space-x-3">
+                            <span class="text-eduGold font-bold">👁️</span>
+                            <div>
+                                <h4 class="font-bold text-eduBlue">Vision</h4>
+                                <p class="text-gray-600 italic">To revolutionize global education by fostering innovation and integrating Christian values.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <span class="text-eduGold font-bold">🚀</span>
+                            <div>
+                                <h4 class="font-bold text-eduBlue">Mission</h4>
+                                <p class="text-gray-600">Transforming education through values-led training and practical partnerships.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80" class="rounded-2xl shadow-2xl" alt="Team">
+            </div>
+        </section>
+
+        <!-- Services View -->
+        <section id="view-services" class="view-section">
+            <div class="bg-gray-50 py-20 px-4">
+                <div class="max-w-7xl mx-auto">
+                    <h2 class="text-4xl font-bold text-eduBlue text-center mb-16">Our Specialized Services</h2>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all border-b-4 border-eduGold">
+                            <h3 class="text-xl font-bold text-eduBlue mb-4">CPD Workshops</h3>
+                            <p class="text-gray-600 mb-6">Professional development for educators focusing on pedagogical excellence and character.</p>
+                            <button data-link="contact" class="nav-trigger text-eduGold font-bold hover:underline">Book Workshop →</button>
+                        </div>
+                        <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all border-b-4 border-eduBlue">
+                            <h3 class="text-xl font-bold text-eduBlue mb-4">Curriculum Integration</h3>
+                            <p class="text-gray-600 mb-6">We audit and redesign curricula to ensure faith integration across all subjects.</p>
+                            <button data-link="contact" class="nav-trigger text-eduGold font-bold hover:underline">Audit Now →</button>
+                        </div>
+                        <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-lg transition-all border-b-4 border-eduGold">
+                            <h3 class="text-xl font-bold text-eduBlue mb-4">Student Mentorship</h3>
+                            <p class="text-gray-600 mb-6">Programs designed to build leadership skills and spiritual depth in young learners.</p>
+                            <button data-link="contact" class="nav-trigger text-eduGold font-bold hover:underline">Learn More →</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Books View -->
+        <section id="view-books" class="view-section">
+            <div class="py-20 px-4 max-w-7xl mx-auto">
+                <h2 class="text-4xl font-bold text-eduBlue mb-16 text-center">Publications</h2>
+                <div class="flex flex-col md:flex-row gap-12 items-center mb-20">
+                    <img src="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80" class="w-64 rounded-lg shadow-xl" alt="Book Cover">
+                    <div>
+                        <span class="bg-eduGold/10 text-eduGold px-3 py-1 rounded-full text-sm font-bold">Featured Publication</span>
+                        <h3 class="text-3xl font-bold text-eduBlue mt-4 mb-4">Ripples in Teacher Education</h3>
+                        <p class="text-lg text-gray-700 leading-relaxed mb-6">A visionary call to reimagine teacher preparation for global relevance and Kingdom impact.</p>
+                        <a href="#" class="inline-block bg-eduBlue text-white px-8 py-3 rounded-lg font-bold hover:bg-blue-900 shadow-md">Buy on Amazon</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact View -->
+        <section id="view-contact" class="view-section">
+            <div class="py-20 px-4 max-w-5xl mx-auto">
+                <div class="bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-gray-100">
+                    <div class="bg-eduBlue text-white p-12 md:w-1/3">
+                        <h3 class="text-2xl font-bold mb-6">Contact Us</h3>
+                        <p class="text-blue-100 mb-8">Ready to transform your educational approach? Reach out today.</p>
+                        <div class="space-y-4">
+                            <p>📧 hello@louiseduplus.org</p>
+                            <p>📞 +234 000 000 0000</p>
+                            <p>📍 Lagos, Nigeria</p>
+                        </div>
+                    </div>
+                    <div class="p-12 flex-grow">
+                        <form id="contact-form" class="space-y-6">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <input type="text" placeholder="Your Name" class="w-full px-4 py-3 bg-gray-50 border rounded-lg outline-none focus:ring-2 focus:ring-eduGold" required>
+                                <input type="email" placeholder="Email Address" class="w-full px-4 py-3 bg-gray-50 border rounded-lg outline-none focus:ring-2 focus:ring-eduGold" required>
+                            </div>
+                            <select class="w-full px-4 py-3 bg-gray-50 border rounded-lg outline-none focus:ring-2 focus:ring-eduGold">
+                                <option>School Consultancy</option>
+                                <option>Teacher Training</option>
+                                <option>Books & Resources</option>
+                            </select>
+                            <textarea placeholder="How can we help?" rows="4" class="w-full px-4 py-3 bg-gray-50 border rounded-lg outline-none focus:ring-2 focus:ring-eduGold" required></textarea>
+                            <button type="submit" class="w-full bg-eduGold text-eduBlue font-bold py-4 rounded-lg shadow-lg hover:bg-eduGoldLight transition-all">Send Message</button>
+                        </form>
+                        <div id="form-success" class="hidden text-center py-10">
+                            <div class="text-5xl mb-4">✅</div>
+                            <h4 class="text-xl font-bold text-eduBlue">Message Sent!</h4>
+                            <p class="text-gray-600">We'll get back to you within 24 hours.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-eduBlue text-white pt-20 pb-10 px-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center border-t border-blue-900 pt-10">
+            <div class="mb-8 md:mb-0 text-center md:text-left">
+                <p class="font-serif text-2xl font-bold">Louis Eduplus Ltd</p>
+                <p class="text-blue-300">Empowering Minds, Transforming Learning.</p>
+            </div>
+            <div class="flex space-x-6 text-sm">
+                <a href="#" data-link="home" class="nav-trigger hover:text-eduGold">Home</a>
+                <a href="#" data-link="about" class="nav-trigger hover:text-eduGold">About</a>
+                <a href="#" data-link="contact" class="nav-trigger hover:text-eduGold">Privacy</a>
+            </div>
+        </div>
+        <p class="text-center text-blue-500 text-xs mt-10">© 2024 Louis Eduplus Ltd. All rights reserved.</p>
+    </footer>
+
+    <!-- AI Consultant Chat -->
+    <div class="fixed bottom-6 right-6 z-[100]">
+        <div id="ai-chat-window" class="chat-closed bg-white shadow-2xl rounded-2xl flex flex-col border border-gray-100 transition-all duration-300 ease-in-out">
+            <div class="bg-eduBlue p-4 flex justify-between items-center text-white">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-eduGold rounded-full flex items-center justify-center text-xs font-bold text-eduBlue">LE</div>
+                    <span class="font-bold text-sm">Louis AI Consultant</span>
+                </div>
+                <button id="close-chat" class="hover:text-eduGold">✕</button>
+            </div>
+            <div id="chat-messages" class="flex-grow overflow-y-auto p-4 space-y-4 bg-gray-50 text-sm">
+                <div class="bg-white p-3 rounded-xl border border-gray-100 rounded-tl-none">Hello! I am Louis, your virtual educational consultant. How can I help you transform learning today?</div>
+            </div>
+            <div class="p-4 bg-white border-t flex space-x-2">
+                <input id="chat-input" type="text" placeholder="Ask anything..." class="flex-grow px-3 py-2 bg-gray-50 border rounded-full outline-none focus:ring-1 focus:ring-eduGold text-sm">
+                <button id="send-btn" class="bg-eduBlue text-white p-2 rounded-full hover:bg-blue-900">
+                    <svg class="w-4 h-4 rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" /></svg>
+                </button>
+            </div>
+        </div>
+        <button id="open-chat" class="w-14 h-14 bg-eduGold text-eduBlue rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform mt-4 ml-auto">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+        </button>
+    </div>
+
+    <script type="module" src="./index.tsx"></script>
 </body>
 </html>
